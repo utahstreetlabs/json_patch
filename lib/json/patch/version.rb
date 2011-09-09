@@ -1,5 +1,5 @@
 module JSON
-  module Patch
+  class Patch
     VERSION = "0.0.1"
   end
 end

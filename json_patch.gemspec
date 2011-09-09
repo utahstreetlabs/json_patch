@@ -3,15 +3,21 @@ $:.push File.expand_path("../lib", __FILE__)
 require "json/patch/version"
 
 Gem::Specification.new do |s|
-  s.name        = "json-patch"
+  s.name        = "json_patch"
   s.version     = JSON::Patch::VERSION
   s.authors     = ["Travis Vachon"]
   s.email       = ["travis@copious.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{JSON patch implementation in ruby}
+  s.description = %q{An implementation of JSON patch in Ruby.
 
-  s.rubyforge_project = "json-patch"
+http://tools.ietf.org/html/draft-pbryan-json-patch-01
+
+Utilities for applying JSON patches to arbitary objects. To
+participate in the patch protocol, classes can implement #apply_patch
+}
+
+  s.rubyforge_project = "json_patch"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -20,5 +26,7 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_development_dependency "rspec"
+  s.add_development_dependency "mongoid"
+  s.add_development_dependency "stickler"
   # s.add_runtime_dependency "rest-client"
 end
