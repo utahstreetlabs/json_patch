@@ -24,9 +24,7 @@ participate in the patch protocol, classes can implement #apply_patch
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # specify any dependencies here; for example:
   s.add_development_dependency "rspec"
   s.add_development_dependency "mongoid"
   s.add_development_dependency "stickler"
-  # s.add_runtime_dependency "rest-client"
 end
