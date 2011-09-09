@@ -15,6 +15,11 @@ module JSON
     #
     # #apply_patch should return true if the patch can be succesfully
     # applied and false otherwise.
+    #
+    # If any hunk in the patch cannot be applied successfully, the
+    # PATCH rfc dictates that the entire patch MUST not be
+    # applied. This atomicity must be handled by the #apply_patch
+    # implementation.
     def apply_to(object)
       object.apply_patch(self)# if object.respond_to?(:apply_patch)
     end
@@ -29,12 +34,17 @@ module JSON
            when attributes.has_key?('remove') then 'remove'
            when attributes.has_key?('replace') then 'replace'
            end
-      @op = op.to_sym if op
+      if op
+        @op = op.to_sym
+      else
+        raise ArgumentError
+      end
       self.path = attributes[op]
       @value = attributes['value']
     end
 
     def path=(path_string)
+      raise ArgumentError if path_string and not path_string[0] == '/'
       path_string ||= ''
       @path = path_string.split('/').drop(1).map {|section| section.to_sym}
     end
@@ -47,7 +57,9 @@ module JSON
     # OpenStruct.new(:foo => 1, :bar => OpenStruct.new(:baz => 2))
     # JSON::Hunk.new('add' => '/bar/baz').resolve_path(obj).should == [obj.bar, :baz]
     def resolve_path(object)
-      [path[0..-2].inject(object) {|o, e| o.send(e) }, path[-1]]
+      path_to_element = path[0..-2]
+      element = path[-1]
+      [path_to_element.inject(object) {|o, e| o.send(e) }, element]
     end
 
     def ==(other)

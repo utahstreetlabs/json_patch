@@ -8,12 +8,15 @@ module Mongoid
     # operations while avoiding race conditions from multiple clients?
     #
     # it looks like
+    #
     # Preferences.collection.update({'user_id' => 1}, {'$addToSet' => {'follow_suggest_blacklist' => 4}, '$set' => {'hams' => 2}})
+    #
     # would do this, but a) it needs to deal with multiple hunks
     # acting on the same attribute and b) it looks like mongoid
     # doesn't support this ootb. more research needed...
     #
     # TODO: support more than just :add
+    # TODO: handle numeric path segments
     def apply_patch(patch)
       # compile operation information for verification
       ops = patch.hunks.map do |hunk|

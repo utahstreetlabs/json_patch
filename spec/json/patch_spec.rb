@@ -21,8 +21,9 @@ describe JSON::Patch do
 end
 
 describe JSON::Hunk do
+  subject {JSON::Hunk.new('add' => '/foo/bar', 'value' => 'hams')}
+
   describe "#initialize" do
-    subject {JSON::Hunk.new('add' => '/foo/bar', 'value' => 'hams')}
     its(:op) { should eq(:add)}
     its(:path) { should eq([:foo, :bar])}
     its(:value) { should eq('hams')}
@@ -37,6 +38,10 @@ describe JSON::Hunk do
     it 'should set paths to an empty list when given nil' do
       subject.path = nil
       subject.path.should == []
+    end
+
+    it 'should raise an argument error if path without starting slash is passed' do
+      lambda { subject.path = 'foo/bar' }.should raise_error(ArgumentError)
     end
   end
 
