@@ -1,4 +1,12 @@
-$:.push File.join(File.dirname(__FILE__), '..', 'lib')
+require 'rubygems'
+require 'bundler'
 
-require "rubygems"
-require "json/patch"
+Bundler.setup
+
+require 'rspec'
+require 'mocha'
+require 'json/patch'
+
+RSpec.configure do |config|
+  config.mock_with :mocha
+end

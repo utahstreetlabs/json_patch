@@ -14,7 +14,7 @@ describe JSON::Patch do
   describe '#apply_to' do
     let(:obj) { os(:foo => 1, :bar => os(:baz => 2)) }
     it 'should call apply_patch on the target' do
-      obj.should_receive(:apply_patch).with(subject).and_return(true)
+      obj.expects(:apply_patch).with(subject).returns(true)
       subject.apply_to(obj).should == true
     end
   end

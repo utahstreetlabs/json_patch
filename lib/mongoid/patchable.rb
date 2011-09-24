@@ -15,7 +15,6 @@ module Mongoid
     # acting on the same attribute and b) it looks like mongoid
     # doesn't support this ootb. more research needed...
     #
-    # TODO: support more than just :add
     # TODO: handle numeric path segments
     def apply_patch(patch)
       # compile operation information for verification
@@ -27,18 +26,17 @@ module Mongoid
       if patch_ops_valid?(ops)
         # if something goes wrong here, raise an error to let the client
         # know the patch may be partially applied
-        ops.each do |hunk, obj, element, field|
+        ops.each_with_index do |(hunk, obj, element, field), index|
           value = hunk.value
           case hunk.op
           when :add
-            case field.type.name
-            when 'Array'
-              obj.add_to_set(element, value)
-            else
-              obj.set(element, value)
-            end
+            process_add(obj, field, element, value)
+          when :replace
+            process_replace(obj, field, element, value)
+          when :remove
+            process_remove(obj, field, element)
           else
-            raise UnimplementedError
+            raise "Illegal operation #{hunk.op} in hunk #{index}"
           end
         end
         true
@@ -47,11 +45,62 @@ module Mongoid
 
     protected
 
+    def process_add(obj, field, element, value)
+      case field.type.name
+      when 'Array'
+        obj.add_to_set(element, value)
+      when 'Hash'
+        (key, val) = destructure_hash_value(value)
+        obj.send("#{element}=", {}) if obj.send(element).nil?
+        obj.send(element)[key] = val
+        obj.save(validate: false)
+      else
+        obj.set(element, value)
+      end
+    end
+
+    def process_replace(obj, field, element, value)
+      case field.type.name
+      when 'Array'
+        obj.add_to_set(element, value)
+      when 'Hash'
+        (key, val) = destructure_hash_value(value)
+        obj.send("#{element}=", {}) if obj.send(element).nil?
+        obj.send(element)[key] = val
+        obj.save(validate: false)
+      else
+        obj.set(element, value)
+      end
+    end
+
+    def process_remove(obj, field, element, value = nil)
+      case field.type.name
+      when 'Array'
+        obj.pull_all(element, [value])
+      when 'Hash'
+        (key, val) = destructure_hash_value(value)
+        if obj.send(element).nil?
+          obj.send("#{element}=", {})
+        else
+          obj.send(element).delete(key)
+        end
+        obj.save(validate: false)
+      else
+        obj.set(element, nil)
+      end
+    end
+
     def patch_ops_valid?(ops)
       ops.inject(true) do |valid, (hunk, obj, element, field)|
-        # only support add operations for now
-        valid && hunk && (hunk.op == :add) && hunk.value && obj && element && field
+        return false unless valid && hunk && obj && element && field
+        return !hunk.value.nil? if [:add, :replace].include?(hunk.op)
+        return true if hunk.op == :remove
+        false
       end
+    end
+
+    def destructure_hash_value(value)
+      value.split(/\=/, 2)
     end
   end
 end
