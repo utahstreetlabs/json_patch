@@ -26,7 +26,7 @@ describe Mongoid::Patchable do
     end
 
     it 'should call process_remove' do
-      subject.expects(:process_remove).with(subject, subject.fields['foo'], :foo)
+      subject.expects(:process_remove).with(subject, subject.fields['foo'], :foo, nil)
       subject.apply_patch(JSON::Patch.new([{ 'remove' => '/foo'}])).should be_true
     end
   end

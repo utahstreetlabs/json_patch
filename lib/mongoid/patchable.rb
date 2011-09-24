@@ -34,7 +34,7 @@ module Mongoid
           when :replace
             process_replace(obj, field, element, value)
           when :remove
-            process_remove(obj, field, element)
+            process_remove(obj, field, element, value)
           else
             raise "Illegal operation #{hunk.op} in hunk #{index}"
           end
