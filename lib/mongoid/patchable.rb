@@ -101,11 +101,7 @@ module Mongoid
 
     def destructure_hash_value(value)
       (key, value) = value.split(/\=/, 2)
-      if key.ends_with? '[]'
-        [key.chop.chop, value.split(',')]
-      else
-        [key, value]
-      end
+      key.ends_with?('[]') ? [key.slice(0..-3), value.split(',')] : [key, value]
     end
   end
 end

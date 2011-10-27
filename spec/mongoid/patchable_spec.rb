@@ -88,4 +88,14 @@ describe Mongoid::Patchable do
       subject.send(:process_remove, subject, subject.fields['baz'], :baz)
     end
   end
+
+  describe "#destructure_hash_value" do
+    it "should return array of key and value" do
+      subject.send(:destructure_hash_value, "foo=bar").should == ['foo', 'bar']
+    end
+
+    it "should return removed square brackets from key and array from csv string" do
+      subject.send(:destructure_hash_value, "foo[]=bar,baz").should == ['foo', ['bar', 'baz']]
+    end
+  end
 end
