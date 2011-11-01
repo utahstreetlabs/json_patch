@@ -44,7 +44,8 @@ describe Mongoid::Patchable do
     end
 
     it "should set a scalar" do
-      subject.expects(:set).with(:baz, 12345)
+      subject.expects(:write_attribute).with(:baz, 12345)
+      subject.expects(:save)
       subject.send(:process_add, subject, subject.fields['baz'], :baz, 12345)
     end
   end
@@ -64,7 +65,8 @@ describe Mongoid::Patchable do
 
     it "should replace a scalar" do
       subject.baz = 54321
-      subject.expects(:set).with(:baz, 12345)
+      subject.expects(:write_attribute).with(:baz, 12345)
+      subject.expects(:save)
       subject.send(:process_replace, subject, subject.fields['baz'], :baz, 12345)
     end
   end
@@ -84,7 +86,8 @@ describe Mongoid::Patchable do
 
     it "should nil a scalar" do
       subject.baz = 54321
-      subject.expects(:set).with(:baz, nil)
+      subject.expects(:write_attribute).with(:baz, nil)
+      subject.expects(:save)
       subject.send(:process_remove, subject, subject.fields['baz'], :baz)
     end
   end
