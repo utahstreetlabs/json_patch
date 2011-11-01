@@ -55,7 +55,8 @@ module Mongoid
         obj.send(element)[key] = val
         obj.save(validate: false)
       else
-        obj.set(element, value)
+        obj.write_attribute(element, value)
+        obj.save
       end
     end
 
@@ -69,7 +70,8 @@ module Mongoid
         obj.send(element)[key] = val
         obj.save(validate: false)
       else
-        obj.set(element, value)
+        obj.write_attribute(element, value)
+        obj.save
       end
     end
 
@@ -86,7 +88,8 @@ module Mongoid
         end
         obj.save(validate: false)
       else
-        obj.set(element, nil)
+        obj.write_attribute(element, nil)
+        obj.save
       end
     end
 
