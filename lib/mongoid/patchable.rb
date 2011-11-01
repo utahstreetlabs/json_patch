@@ -56,7 +56,7 @@ module Mongoid
         obj.save(validate: false)
       else
         obj.write_attribute(element, value)
-        obj.save(validate: false)
+        obj.save
       end
     end
 
@@ -71,7 +71,7 @@ module Mongoid
         obj.save(validate: false)
       else
         obj.write_attribute(element, value)
-        obj.save(validate: false)
+        obj.save
       end
     end
 
@@ -89,7 +89,7 @@ module Mongoid
         obj.save(validate: false)
       else
         obj.write_attribute(element, nil)
-        obj.save(validate: false)
+        obj.save
       end
     end
 
