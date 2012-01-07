@@ -48,7 +48,7 @@ module Mongoid
     def process_add(obj, field, element, value)
       case field.type.name
       when 'Array'
-        obj.add_to_set(element, value)
+        obj.add_to_set(element, (value.is_a?(Array) ? {'$each' => value} : value))
       when 'Hash'
         (key, val) = destructure_hash_value(value)
         obj.send("#{element}=", {}) if obj.send(element).nil?
@@ -63,7 +63,7 @@ module Mongoid
     def process_replace(obj, field, element, value)
       case field.type.name
       when 'Array'
-        obj.add_to_set(element, value)
+        obj.add_to_set(element, (value.is_a?(Array) ? {'$each' => value} : value))
       when 'Hash'
         (key, val) = destructure_hash_value(value)
         obj.send("#{element}=", {}) if obj.send(element).nil?
@@ -78,7 +78,7 @@ module Mongoid
     def process_remove(obj, field, element, value = nil)
       case field.type.name
       when 'Array'
-        obj.pull_all(element, [value])
+        obj.pull_all(element, (value.is_a?(Array) ? value : [value]))
       when 'Hash'
         (key, val) = destructure_hash_value(value)
         if obj.send(element).nil?

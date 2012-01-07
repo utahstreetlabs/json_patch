@@ -28,5 +28,5 @@ participate in the patch protocol, classes can implement #apply_patch
   s.add_development_dependency "rspec"
   s.add_development_dependency "bson_ext"
   s.add_development_dependency "mongoid"
-  s.add_development_dependency "stickler"
+  s.add_development_dependency "gemfury"
 end
