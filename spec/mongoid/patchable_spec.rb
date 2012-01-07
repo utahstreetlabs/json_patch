@@ -32,9 +32,14 @@ describe Mongoid::Patchable do
   end
 
   describe "#process_add" do
-    it "should add an element to an array" do
+    it "should add a scalar element to an array" do
       subject.expects(:add_to_set).with(:foo, 12345)
       subject.send(:process_add, subject, subject.fields['foo'], :foo, 12345)
+    end
+
+    it "should add an array element to an array" do
+      subject.expects(:add_to_set).with(:foo, {'$each' => [12345]})
+      subject.send(:process_add, subject, subject.fields['foo'], :foo, [12345])
     end
 
     it "should add an element to a hash" do
@@ -51,9 +56,14 @@ describe Mongoid::Patchable do
   end
 
   describe "#process_replace" do
-    it "should replace an element in an array" do
+    it "should replace a scalar element in an array" do
       subject.expects(:add_to_set).with(:foo, 12345)
       subject.send(:process_replace, subject, subject.fields['foo'], :foo, 12345)
+    end
+
+    it "should replace an array element in an array" do
+      subject.expects(:add_to_set).with(:foo, {'$each' => [12345]})
+      subject.send(:process_replace, subject, subject.fields['foo'], :foo, [12345])
     end
 
     it "should replace an element in a hash" do
@@ -72,9 +82,14 @@ describe Mongoid::Patchable do
   end
 
   describe "#process_remove" do
-    it "should remove an element from an array" do
+    it "should remove a scalar element from an array" do
       subject.expects(:pull_all).with(:foo, [12345])
       subject.send(:process_remove, subject, subject.fields['foo'], :foo, 12345)
+    end
+
+    it "should remove a array element from an array" do
+      subject.expects(:pull_all).with(:foo, [12345])
+      subject.send(:process_remove, subject, subject.fields['foo'], :foo, [12345])
     end
 
     it "should remove an element from a hash" do
